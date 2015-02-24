@@ -10,15 +10,12 @@ import java.util.logging.Logger;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author C0648301
  */
 public class credentials {
-    
 
-   
     public static Connection getConnection() {
         Connection conn = null;
         try {
@@ -33,6 +30,3 @@ public class credentials {
         return conn;
     }
 }
-
-    
-

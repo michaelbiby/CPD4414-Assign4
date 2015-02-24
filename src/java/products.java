@@ -18,14 +18,13 @@ import javax.servlet.http.HttpServletResponse;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author C0648301
  */
 @WebServlet("/products")
-public class products 
-    extends HttpServlet {
+public class products
+        extends HttpServlet {
 
     /**
      * Provides GET /servlet and GET /servlet?id=XXX
@@ -47,7 +46,7 @@ public class products
             }
         } catch (IOException ex) {
             Logger.getLogger(products.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        }
     }
 
     /**
@@ -62,21 +61,21 @@ public class products
         try (PrintWriter out = response.getWriter()) {
             if (keySet.contains("id") && keySet.contains("product_name") && keySet.contains("product_description") && keySet.contains("quantity")) {
                 // There are some parameters     
-                String id = request. getParameter("id");
+                String id = request.getParameter("id");
                 String name = request.getParameter("product_name");
                 String description = request.getParameter("product_description");
                 String quantity = request.getParameter("quantity");
-                
-                doUpdate("INSERT INTO PRODUCT (product_id, product_name, product_description, quantity) VALUES (?, ?, ?, ?)",id, name, description, quantity);
+
+                doUpdate("INSERT INTO PRODUCT (product_id, product_name, product_description, quantity) VALUES (?, ?, ?, ?)", id, name, description, quantity);
             } else {
                 // There are no parameters at all
                 out.println("Error: Not enough data to input. Please use a URL of the form /servlet?name=XXX&age=XXX");
             }
         } catch (IOException ex) {
             Logger.getLogger(products.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        }
     }
-    
+
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response) {
         Set<String> keySet = request.getParameterMap().keySet();
@@ -87,7 +86,7 @@ public class products
                 String name = request.getParameter("product_name");
                 String description = request.getParameter("product_description");
                 String quantity = request.getParameter("quantity");
-                
+
                 doUpdate("UPDATE PRODUCT SET product_id = ?, product_name = ?, product_description = ?, quantity = ? WHERE PRODUCT_ID = ?", id, name, description, quantity, id);
             } else {
                 // There are no parameters at all
@@ -95,9 +94,9 @@ public class products
             }
         } catch (IOException ex) {
             Logger.getLogger(products.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        }
     }
-    
+
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) {
         Set<String> keySet = request.getParameterMap().keySet();
@@ -105,7 +104,7 @@ public class products
             if (keySet.contains("id")) {
                 // There are some parameters                
                 String id = request.getParameter("id");
-                
+
                 doUpdate("DELETE FROM PRODUCT WHERE product_id = ?", id);
             } else {
                 // There are no parameters at all
@@ -113,7 +112,7 @@ public class products
             }
         } catch (IOException ex) {
             Logger.getLogger(products.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        }
     }
 
     private String getResults(String query, String... params) {
@@ -125,7 +124,7 @@ public class products
             }
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
-                sb.append(String.format("%s\t%s\t%s\t%s\n", rs.getInt("product_id"), rs.getString("product_name"), rs.getString("product_description"),rs.getInt("quantity")));
+                sb.append(String.format("%s\t%s\t%s\t%s\n", rs.getInt("product_id"), rs.getString("product_name"), rs.getString("product_description"), rs.getInt("quantity")));
             }
         } catch (SQLException ex) {
             Logger.getLogger(products.class.getName()).log(Level.SEVERE, null, ex);
@@ -147,6 +146,3 @@ public class products
         return numChanges;
     }
 }
-
-    
-
