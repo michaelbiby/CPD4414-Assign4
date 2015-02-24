@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 /**
  *
- * @author C0648301
+ * @author C0644696
  */
 @WebServlet("/products")
 public class products
@@ -42,7 +42,7 @@ public class products
             } else {
                 // There are some parameters
                 int id = Integer.parseInt(request.getParameter("id"));
-                out.println(getResults("SELECT * FROM PRODUCT WHERE PRODUCT_ID = ?", String.valueOf(id)));
+                out.println(getResults("SELECT * FROM PRODUCT WHERE Product_ID = ?", String.valueOf(id)));
             }
         } catch (IOException ex) {
             Logger.getLogger(products.class.getName()).log(Level.SEVERE, null, ex);
@@ -59,14 +59,14 @@ public class products
     protected void doPost(HttpServletRequest request, HttpServletResponse response) {
         Set<String> keySet = request.getParameterMap().keySet();
         try (PrintWriter out = response.getWriter()) {
-            if (keySet.contains("id") && keySet.contains("product_name") && keySet.contains("product_description") && keySet.contains("quantity")) {
+            if (keySet.contains("product_id") && keySet.contains("Name") && keySet.contains("Description") && keySet.contains("Quantity")) {
                 // There are some parameters     
-                String id = request.getParameter("id");
-                String name = request.getParameter("product_name");
-                String description = request.getParameter("product_description");
-                String quantity = request.getParameter("quantity");
+                String product_id = request.getParameter("product_id");
+                String Name = request.getParameter("Name");
+                String Description = request.getParameter("Description");
+                String Quantity = request.getParameter("Quantity");
 
-                doUpdate("INSERT INTO PRODUCT (product_id, product_name, product_description, quantity) VALUES (?, ?, ?, ?)", id, name, description, quantity);
+                doUpdate("INSERT INTO PRODUCT (Product_ID, Name, Description, Quantity) VALUES (?, ?, ?, ?)", product_id, Name, Description, Quantity);
             } else {
                 // There are no parameters at all
                 out.println("Error: Not enough data to input. Please use a URL of the form /servlet?name=XXX&age=XXX");
@@ -80,14 +80,14 @@ public class products
     protected void doPut(HttpServletRequest request, HttpServletResponse response) {
         Set<String> keySet = request.getParameterMap().keySet();
         try (PrintWriter out = response.getWriter()) {
-            if (keySet.contains("id") && keySet.contains("product_name") && keySet.contains("product_description") && keySet.contains("quantity")) {
+            if (keySet.contains("product_id") && keySet.contains("Name") && keySet.contains("Description") && keySet.contains("Quantity")) {
                 // There are some parameters  
-                String id = request.getParameter("product_id");
-                String name = request.getParameter("product_name");
-                String description = request.getParameter("product_description");
-                String quantity = request.getParameter("quantity");
+                String product_id = request.getParameter("product_id");
+                String Name = request.getParameter("Name");
+                String Description = request.getParameter("Description");
+                String Quantity = request.getParameter("Quantity");
 
-                doUpdate("UPDATE PRODUCT SET product_id = ?, product_name = ?, product_description = ?, quantity = ? WHERE PRODUCT_ID = ?", id, name, description, quantity, id);
+                doUpdate("UPDATE PRODUCT SET Product_ID = ?, Name = ?, Description = ?, Quantity = ? WHERE PRODUCT_ID = ?", product_id, Name, Description, Quantity, product_id);
             } else {
                 // There are no parameters at all
                 out.println("Error: Not enough data to input. Please use a URL of the form /servlet?name=XXX&age=XXX");
@@ -101,11 +101,11 @@ public class products
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) {
         Set<String> keySet = request.getParameterMap().keySet();
         try (PrintWriter out = response.getWriter()) {
-            if (keySet.contains("id")) {
+            if (keySet.contains("product_id")) {
                 // There are some parameters                
-                String id = request.getParameter("id");
+                String product_id = request.getParameter("product_id");
 
-                doUpdate("DELETE FROM PRODUCT WHERE product_id = ?", id);
+                doUpdate("DELETE FROM PRODUCT WHERE Product_ID = ?", product_id);
             } else {
                 // There are no parameters at all
                 out.println("Error: Not enough data to input. Please use a URL of the form /servlet?name=XXX&age=XXX");
@@ -124,7 +124,7 @@ public class products
             }
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
-                sb.append(String.format("%s\t%s\t%s\t%s\n", rs.getInt("product_id"), rs.getString("product_name"), rs.getString("product_description"), rs.getInt("quantity")));
+                sb.append(String.format("%s\t%s\t%s\t%s\n", rs.getInt("Product_ID"), rs.getString("Name"), rs.getString("Description"), rs.getInt("Quantity")));
             }
         } catch (SQLException ex) {
             Logger.getLogger(products.class.getName()).log(Level.SEVERE, null, ex);

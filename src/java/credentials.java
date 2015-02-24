@@ -12,7 +12,7 @@ import java.util.logging.Logger;
  */
 /**
  *
- * @author C0648301
+ * @author C0644696
  */
 public class credentials {
 
@@ -20,7 +20,7 @@ public class credentials {
         Connection conn = null;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            String jdbc = "jdbc:mysql://localhost/assignment3";
+            String jdbc = "jdbc:mysql://localhost/assign3";
             String user = "root";
             String pass = "";
             conn = DriverManager.getConnection(jdbc, user, pass);
