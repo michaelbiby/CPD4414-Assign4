@@ -20,7 +20,7 @@ public class credentials {
         Connection conn = null;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            String jdbc = "jdbc:mysql://localhost/assign3";
+            String jdbc = "jdbc:mysql://localhost/assign4";
             String user = "root";
             String pass = "";
             conn = DriverManager.getConnection(jdbc, user, pass);
