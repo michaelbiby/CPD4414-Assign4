@@ -1,18 +1,26 @@
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.Json;
+import javax.json.stream.JsonParser;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -51,8 +59,8 @@ public class products {
     @Produces("application/json")
     public String doGet(@PathParam("id") String id) {
 
-        String result = getResults("SELECT * FROM PRODUCT where product_id = ?",id);
-        return result;
+        String res = getResults("SELECT * FROM PRODUCT where product_id = ?",id);
+        return res;
     }
     /**
      * Provides POST /servlet?name=XXX&age=XXX
@@ -61,48 +69,75 @@ public class products {
      * @param response - the response object
      */
    
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
-        Set<String> keySet = request.getParameterMap().keySet();
-        try (PrintWriter out = response.getWriter()) {
-            if (keySet.contains("product_id") && keySet.contains("Name") && keySet.contains("Description") && keySet.contains("Quantity")) {
-                // There are some parameters     
-                String product_id = request.getParameter("product_id");
-                String Name = request.getParameter("Name");
-                String Description = request.getParameter("Description");
-                String Quantity = request.getParameter("Quantity");
-
-                doUpdate("INSERT INTO PRODUCT (Product_ID, Name, Description, Quantity) VALUES (?, ?, ?, ?)", product_id, Name, Description, Quantity);
-            } else {
-                // There are no parameters at all
-                out.println("Error: Not enough data to input. Please use a URL of the form /servlet?name=XXX&age=XXX");
+      @POST
+    @Consumes("application/json")
+    public void doPost(String str) {
+        JsonParser parser = Json.createParser(new StringReader(str));
+        Map<String, String> map = new HashMap<>();
+        String name = "", value;
+       
+        while (parser.hasNext()) {
+            JsonParser.Event evt = parser.next();
+            switch (evt) {
+                case KEY_NAME:
+                    name = parser.getString();
+                    break;
+                case VALUE_STRING:
+                    
+                    value = parser.getString();
+                    map.put(name, value);
+                    break;
+                case VALUE_NUMBER:
+                    value = Integer.toString(parser.getInt());
+                    map.put(name, value);
+                    break;
+                    
             }
-        } catch (IOException ex) {
-            Logger.getLogger(products.class.getName()).log(Level.SEVERE, null, ex);
+            
         }
+        System.out.println(map);
+        
+            String names = map.get("name");
+            String description = map.get("description");
+            String quantity = map.get("quantity");
+            
+
+        
+        doUpdate("INSERT INTO PRODUCT ( product_name, product_description, quantity) VALUES ( ?, ?, ?)", names, description, quantity);
     }
-
-    @Override
-    protected void doPut(HttpServletRequest request, HttpServletResponse response) {
-        Set<String> keySet = request.getParameterMap().keySet();
-        try (PrintWriter out = response.getWriter()) {
-            if (keySet.contains("product_id") && keySet.contains("Name") && keySet.contains("Description") && keySet.contains("Quantity")) {
-                // There are some parameters  
-                String product_id = request.getParameter("product_id");
-                String Name = request.getParameter("Name");
-                String Description = request.getParameter("Description");
-                String Quantity = request.getParameter("Quantity");
-
-                doUpdate("UPDATE PRODUCT SET Product_ID = ?, Name = ?, Description = ?, Quantity = ? WHERE PRODUCT_ID = ?", product_id, Name, Description, Quantity, product_id);
-            } else {
-                // There are no parameters at all
-                out.println("Error: Not enough data to input. Please use a URL of the form /servlet?name=XXX&age=XXX");
+    
+    
+     @PUT
+    @Path("{id}")
+    @Consumes("application/json")
+    public void doPut(@PathParam("id") String id, String str) {
+        JsonParser parser = Json.createParser(new StringReader(str));
+        Map<String, String> map = new HashMap<>();
+        String name = "", value;
+       
+        while (parser.hasNext()) {
+            JsonParser.Event evt = parser.next();
+            switch (evt) {
+                case KEY_NAME:
+                    name = parser.getString();
+                    break;
+                case VALUE_STRING:
+                    value = parser.getString();
+                    map.put(name, value);
+                    break;
             }
-        } catch (IOException ex) {
-            Logger.getLogger(products.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
+        System.out.println(map);
+        
+            
+            String names = map.get("name");
+            String description = map.get("description");
+            String quantity = map.get("quantity");
 
-    @Override
+                doUpdate("UPDATE PRODUCT SET product_id = ?, product_name = ?, product_description = ?, quantity = ? WHERE PRODUCT_ID = ?", id, names,description,quantity, id);
+           
+    }
+    
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) {
         Set<String> keySet = request.getParameterMap().keySet();
         try (PrintWriter out = response.getWriter()) {
