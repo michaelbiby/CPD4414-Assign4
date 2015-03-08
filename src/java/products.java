@@ -12,6 +12,10 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -22,9 +26,8 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author C0644696
  */
-@WebServlet("/products")
-public class products
-        extends HttpServlet {
+@Path("/products")
+public class products {
 
     /**
      * Provides GET /servlet and GET /servlet?id=XXX
@@ -32,30 +35,32 @@ public class products
      * @param request - the request object
      * @param response - the response object
      */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
-        response.setHeader("Content-Type", "text/plain-text");
-        try (PrintWriter out = response.getWriter()) {
-            if (!request.getParameterNames().hasMoreElements()) {
-                // There are no parameters at all
-                out.println(getResults("SELECT * FROM PRODUCT"));
-            } else {
-                // There are some parameters
-                int id = Integer.parseInt(request.getParameter("id"));
-                out.println(getResults("SELECT * FROM PRODUCT WHERE Product_ID = ?", String.valueOf(id)));
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(products.class.getName()).log(Level.SEVERE, null, ex);
-        }
+       @GET
+    @Produces("application/json")
+    public String doGet() {
+
+        String res = getResults("SELECT * FROM PRODUCT");
+        return res;
+
     }
 
+    
+    
+    @GET
+    @Path("{id}")
+    @Produces("application/json")
+    public String doGet(@PathParam("id") String id) {
+
+        String result = getResults("SELECT * FROM PRODUCT where product_id = ?",id);
+        return result;
+    }
     /**
      * Provides POST /servlet?name=XXX&age=XXX
      *
      * @param request - the request object
      * @param response - the response object
      */
-    @Override
+   
     protected void doPost(HttpServletRequest request, HttpServletResponse response) {
         Set<String> keySet = request.getParameterMap().keySet();
         try (PrintWriter out = response.getWriter()) {
